@@ -23,15 +23,28 @@ Connect( int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
 
 
 int 
-Read( int sockfd, void *data, size_t size , int logged, char* logname)
+Receive( int sockfd, void *data, size_t size, int logged, char* logname)
 {
-  FILE *lfd;
- 
-
+   FILE *lfd; 
+   binarydata *ptr;
+   int n;
   
+   n = read( sockfd, data, NUMOFBYTES );
+   
+   if( n != NUMOFBYTES )
+      return FAILURE;
 
+   if( data->mesgType != MAGICNUM  )    
+      return FAILURE;  
+  
+   if( data->status != REPLY )
+      return FAILURE;
+   
+   if( data->timezone != "AEST" )
+      return FAILURE;
+
+    
 }
-
 
 
 int 

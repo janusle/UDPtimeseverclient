@@ -3,13 +3,18 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<strings.h>
-
 #include "error.h"
 
 #define CONNECTED 1
 #define DISCONNECTED 0
-#define LOGGED 1;
-#define UNLOGGED 0;
+#define LOGGED 1
+#define UNLOGGED 0
+#define NUMOFBYTES 16
+#define SUCCESS 0
+#define FAILURE -1
+#define MAGICNUM 0xA3F0
+#define REPLY 0xB4
+#define REQUEST 0x52
 
 type struct data 
 {
