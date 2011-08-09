@@ -37,13 +37,10 @@ Receive( int sockfd, void *data, size_t size, int logged, char* logname)
    if( data->mesgType != MAGICNUM  )    
       return FAILURE;  
   
-   if( data->status != REPLY )
-      return FAILURE;
-   
    if( data->timezone != "AEST" )
       return FAILURE;
 
-    
+   return SUCCESS; 
 }
 
 
@@ -61,7 +58,7 @@ send( int fd, void *data, size_t size , int connected,
 
      if ( write( fd, data, nleft ) < size )
      {
-       return -1; 
+       return FAILURE; 
      }
  
      if( logged )
