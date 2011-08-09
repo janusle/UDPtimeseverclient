@@ -1,3 +1,6 @@
+#include "udp.h"
+#include "error.h"
+
 int 
 Socket( int family, int type, int protocol )
 {
@@ -28,16 +31,17 @@ Receive( int sockfd, void *data, size_t size, int logged, char* logname)
    FILE *lfd; 
    binarydata *ptr;
    int n;
-  
+   ptr = (binarydata*)data;
+
    n = read( sockfd, data, NUMOFBYTES );
    
    if( n != NUMOFBYTES )
       return FAILURE;
 
-   if( data->mesgType != MAGICNUM  )    
+   if( ptr->mesgType != MAGICNUM  )    
       return FAILURE;  
   
-   if( data->timezone != "AEST" )
+   if( strcmp( (const char*)ptr->timezone, "AEST") != 0 )
       return FAILURE;
 
    return SUCCESS; 
@@ -45,7 +49,7 @@ Receive( int sockfd, void *data, size_t size, int logged, char* logname)
 
 
 int 
-send( int fd, void *data, size_t size , int connected, 
+senddata( int fd, void *data, size_t size , int connected, 
       const struct sockaddr *servaddr, socklen_t addrlen, int logged, char* logname  )
 {
      FILE *lfd; 
@@ -56,7 +60,7 @@ send( int fd, void *data, size_t size , int connected,
      if ( connected )
         Connect( fd, (SA*)servaddr, addrlen);
 
-     if ( write( fd, data, nleft ) < size )
+     if ( write( fd, data, NUMOFBYTES ) < (int)size )
      {
        return FAILURE; 
      }
