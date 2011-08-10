@@ -21,8 +21,10 @@ main(int argc, char** argv)
  
   inet_ntop(AF_INET, &(sock_addr->sin_addr), test, 16);
   /*printf("%s\n" ,test);*/
-  temp = request( sockfd, &sock_addr, LOGGED);
+  request( sockfd, &sock_addr, LOGGED);
+  temp = Receive( sockfd, &re, sizeof(re), 0, (SA*)&sock_addr, 
+         sizeof(sock_addr) );
+
   printf("%d\n", temp);
-  //temp = Receive( sockfd, &re, sizeof(re), 0, "reclog");
   return 0;
 }

@@ -21,14 +21,16 @@ Socket( int family, int type, int protocol )
 
 
 int 
-Receive( int sockfd, void *data, size_t size, int logged )
+Receive( int sockfd, void *data, size_t size, 
+         const struct sockaddr *servaddr, socklen_t addrlen,
+         int logged )
 {
    FILE *lfd; 
    binarydata *ptr;
    int n;
    ptr = (binarydata*)data;
 
-   n = read( sockfd, data, NUMOFBYTES );
+   n = recvfrom( sockfd, data, NUMOFBYTES ,0 ,servaddr, &addrlen  );
    
    if( n != NUMOFBYTES )
       return FAILURE;
@@ -68,7 +70,7 @@ clientinit( char* hostname , char* port ,SAI** sock_addr )
 
 
 int 
-senddata( int fd, void *data, size_t size ,
+senddata( int fd, void *data,int size ,
       const struct sockaddr *servaddr, socklen_t addrlen, int logged )
 {
      FILE *lfd; 
@@ -81,24 +83,27 @@ senddata( int fd, void *data, size_t size ,
      {
        return FAILURE; 
      }
- 
+
+     printf("%d\n", size);
      if( logged )
      {
        lfd = fopen(SENDLOG, "a");
-       fprintf(lfd, "%x\n%c\n%c\n%c\n%c\n%c\n%c\n%d\n%s\n\n",
+       fprintf(lfd, "%x\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n\n",
                ptr->mesgType, ptr->status, ptr->second,
                ptr->minute, ptr->hour, ptr->day, 
-               ptr->month, ptr->year, ptr->timezone);
+               ptr->month, ptr->year, ptr->timezone[0], ptr->timezone[1],
+               ptr->timezone[2], ptr->timezone[3]);
        fclose(lfd);
 
        /* for test */
-       fprintf(stdout, "%x\n%c\n%c\n%c\n%c\n%c\n%c\n%d\n%s\n\n",
+       fprintf(stdout, "%x\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n\n",
                ptr->mesgType, ptr->status, ptr->second,
                ptr->minute, ptr->hour, ptr->day, 
-               ptr->month, ptr->year, ptr->timezone);
+               ptr->month, ptr->year, ptr->timezone[0], ptr->timezone[1],
+               ptr->timezone[2],ptr->timezone[3]);
      }
   
-     return 0;
+     return SUCCESS;
 }
 
 
