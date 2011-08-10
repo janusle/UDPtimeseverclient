@@ -41,7 +41,7 @@ Receive( int sockfd, void *data, size_t size, int logged, char* logname)
    if( ptr->mesgType != MAGICNUM  )    
       return FAILURE;  
   
-   if( strcmp( (const char*)ptr->timezone, "AEST") != 0 )
+   if( memcmp( (const char*)ptr->timezone, "AEST", TIMEZONELEN) != 0 )
       return FAILURE;
 
    return SUCCESS; 
@@ -49,12 +49,26 @@ Receive( int sockfd, void *data, size_t size, int logged, char* logname)
 
 
 int 
-clientinit( char* hostname , int port, struct sockaddr_in* sa)
+clientinit( char* hostname , char* port ,SA** sock_addr )
 {
-  bzero(*sa, sizeof(*sa));
-  sa->sin_family = AF_INET;
-  sa->sin_port = htons(port);
+  struct addrinfo hints, *res;
+  int sockfd;
+
+  bzero(&hints, sizeof(hints));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_DGRAM;
   
+  if( getaddrinfo( hostname, port, &hints, &res) != 0 )
+  {
+     err_quit("Address is invalid", false);
+  }
+
+  *sock_addr = res->ai_addr;
+
+  sockfd = Socket( AF_INET, SOCK_DGRAM, 0);
+  
+  return sockfd;
+
 }
 
 
