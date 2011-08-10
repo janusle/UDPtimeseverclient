@@ -4,7 +4,7 @@
 #include<sys/errno.h>
 
 /* print error msg to stderr, if u equals true then print usage as well*/
-void err_quit(char *st, bool u);
+void err_quit(bool u);
 
 /* print usage to stderr */
 void usage();

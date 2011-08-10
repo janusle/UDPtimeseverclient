@@ -1,6 +1,9 @@
 #include "udp.h"
 #include "error.h"
 
+extern int errno;
+
+
 int 
 Socket( int family, int type, int protocol )
 {
@@ -8,21 +11,13 @@ Socket( int family, int type, int protocol )
   sockfd = socket( family, type, protocol );
   if( sockfd < 0 )
   {
-     err_quit("Socket error", false);
+     err_quit(false);
   }
   
   return sockfd;
 }
 
 
-void
-Connect( int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
-{
-  if( connect( sockfd, (SA*)servaddr, addrlen ) == -1 )
-  {
-    err_quit("Connect error", false);   
-  }
-}
 
 
 int 
@@ -49,7 +44,7 @@ Receive( int sockfd, void *data, size_t size, int logged, char* logname)
 
 
 int 
-clientinit( char* hostname , char* port ,SA** sock_addr )
+clientinit( char* hostname , char* port ,SAI** sock_addr )
 {
   struct addrinfo hints, *res;
   int sockfd;
@@ -60,10 +55,10 @@ clientinit( char* hostname , char* port ,SA** sock_addr )
   
   if( getaddrinfo( hostname, port, &hints, &res) != 0 )
   {
-     err_quit("Address is invalid", false);
+     err_quit(false);
   }
 
-  *sock_addr = res->ai_addr;
+  *sock_addr = (SAI*)res->ai_addr;
 
   sockfd = Socket( AF_INET, SOCK_DGRAM, 0);
   
@@ -73,7 +68,7 @@ clientinit( char* hostname , char* port ,SA** sock_addr )
 
 
 int 
-senddata( int fd, void *data, size_t size , int connected, 
+senddata( int fd, void *data, size_t size ,
       const struct sockaddr *servaddr, socklen_t addrlen, int logged, char* logname  )
 {
      FILE *lfd; 
@@ -81,8 +76,6 @@ senddata( int fd, void *data, size_t size , int connected,
 
      ptr = (binarydata*)data;
 
-     if ( connected )
-        Connect( fd, (SA*)servaddr, addrlen);
 
      if ( write( fd, data, NUMOFBYTES ) < (int)size )
      {
@@ -109,5 +102,24 @@ senddata( int fd, void *data, size_t size , int connected,
 }
 
 
+int 
+request( int sockfd, SAI* sock_addr, int connected, int logged, 
+        char* logname)
+{
+   binarydata req;
+
+   /* init request data */
+   bzero( &req, sizeof(req) );
+   req.mesgType = MAGICNUM;
+   req.status = 0x52;
+   memcpy( req.timezone, "AEST", TIMEZONELEN);
+ 
+
+   return senddata( sockfd, &req, sizeof(req),  (SA*)sock_addr,
+             sizeof(*sock_addr), logged, logname);
+
+
+
+}
 
 

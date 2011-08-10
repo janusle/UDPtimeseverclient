@@ -39,16 +39,18 @@ typedef struct
 
 typedef struct sockaddr SA;
 
+typedef struct sockaddr_in SAI;
+
 
 int Socket( int family, int type, int protocol);
 
-int senddata( int fd, void *data, size_t size, int connected,
+int senddata( int fd, void *data, size_t size,
              const struct sockaddr *servaddr, socklen_t addrlen,
              int logged, char* logname );
 
 int Read( int sockfd, void *data, size_t size, int logged, char* logname);
 
-int clientint( char* hostname, int port, SA** sock_addr);
+int clientinit( char* hostname, char* port, SAI** sock_addr);
 
 
 

@@ -1,9 +1,10 @@
 #include "error.h"
 
 void 
-err_quit(char *st, bool u)
+err_quit(bool u)
 {
-  fprintf(stderr, "%s\n", st);
+  
+  perror("");
   if( u )
   {
     usage();
