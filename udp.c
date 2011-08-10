@@ -77,7 +77,7 @@ senddata( int fd, void *data, size_t size ,
      ptr = (binarydata*)data;
 
 
-     if ( write( fd, data, NUMOFBYTES ) < (int)size )
+     if ( sendto( fd, data, NUMOFBYTES, 0, servaddr, addrlen ) < (int)size )
      {
        return FAILURE; 
      }
