@@ -22,6 +22,8 @@
 #define REPLY 0xB4
 #define REQUEST 0x52
 #define TIMEZONELEN 4
+#define SENDLOG "sendlog"
+#define RECVLOG "recvlog"
 
 typedef struct 
 {
@@ -46,9 +48,9 @@ int Socket( int family, int type, int protocol);
 
 int senddata( int fd, void *data, size_t size,
              const struct sockaddr *servaddr, socklen_t addrlen,
-             int logged, char* logname );
+             int logged);
 
-int Read( int sockfd, void *data, size_t size, int logged, char* logname);
+int Read( int sockfd, void *data, size_t size, int logged);
 
 int clientinit( char* hostname, char* port, SAI** sock_addr);
 

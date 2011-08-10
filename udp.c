@@ -21,7 +21,7 @@ Socket( int family, int type, int protocol )
 
 
 int 
-Receive( int sockfd, void *data, size_t size, int logged, char* logname)
+Receive( int sockfd, void *data, size_t size, int logged )
 {
    FILE *lfd; 
    binarydata *ptr;
@@ -69,7 +69,7 @@ clientinit( char* hostname , char* port ,SAI** sock_addr )
 
 int 
 senddata( int fd, void *data, size_t size ,
-      const struct sockaddr *servaddr, socklen_t addrlen, int logged, char* logname  )
+      const struct sockaddr *servaddr, socklen_t addrlen, int logged )
 {
      FILE *lfd; 
      binarydata *ptr;
@@ -84,7 +84,7 @@ senddata( int fd, void *data, size_t size ,
  
      if( logged )
      {
-       lfd = fopen(logname, "a");
+       lfd = fopen(SENDLOG, "a");
        fprintf(lfd, "%x\n%c\n%c\n%c\n%c\n%c\n%c\n%d\n%s\n\n",
                ptr->mesgType, ptr->status, ptr->second,
                ptr->minute, ptr->hour, ptr->day, 
@@ -103,8 +103,7 @@ senddata( int fd, void *data, size_t size ,
 
 
 int 
-request( int sockfd, SAI* sock_addr, int connected, int logged, 
-        char* logname)
+request( int sockfd, SAI* sock_addr, int connected, int logged )
 {
    binarydata req;
 
@@ -116,7 +115,7 @@ request( int sockfd, SAI* sock_addr, int connected, int logged,
  
 
    return senddata( sockfd, &req, sizeof(req),  (SA*)sock_addr,
-             sizeof(*sock_addr), logged, logname);
+             sizeof(*sock_addr), logged);
 
 
 
