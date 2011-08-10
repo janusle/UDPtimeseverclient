@@ -12,8 +12,8 @@ error.o: error.c
 udp.o: udp.c
 	$(CC) -c udp.c $(CFLAGS)
 
-time-client.o: time-client.o $(CFLAGS)
-	$(CC) -c time-client.o
+time-client.o: time-client.c 
+	$(CC) -c time-client.c $(CFLAGS)
 
 clean:
 	-rm *.o

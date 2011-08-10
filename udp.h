@@ -35,7 +35,7 @@ typedef struct
 }binarydata; 
 
 
-typedef struct sockaddr_in SA;
+typedef struct sockaddr SA;
 
 
 int Socket( int family, int type, int protocol);

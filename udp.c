@@ -18,7 +18,7 @@ Socket( int family, int type, int protocol )
 void
 Connect( int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)
 {
-  if( connect( sockfd, servaddr, addrlen ) == -1 )
+  if( connect( sockfd, (SA*)servaddr, addrlen ) == -1 )
   {
     err_quit("Connect error", false);   
   }
@@ -45,6 +45,16 @@ Receive( int sockfd, void *data, size_t size, int logged, char* logname)
       return FAILURE;
 
    return SUCCESS; 
+}
+
+
+int 
+clientinit( char* hostname , int port, struct sockaddr_in* sa)
+{
+  bzero(*sa, sizeof(*sa));
+  sa->sin_family = AF_INET;
+  sa->sin_port = htons(port);
+  
 }
 
 
