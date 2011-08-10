@@ -9,6 +9,7 @@ main(int argc, char** argv)
   int temp;
   SAI* sock_addr;
   char test[16];
+  char logname[20] = "reqlog";
   binarydata re;
   /*
   if( argc < 2 )
@@ -21,7 +22,8 @@ main(int argc, char** argv)
  
   inet_ntop(AF_INET, &(sock_addr->sin_addr), test, 16);
   /*printf("%s\n" ,test);*/
-  request( sockfd, &sock_addr, LOGGED, "reqlog");
-  temp = Receive( sockfd, &re, sizeof(re), 0, "reclog");
+  temp = request( sockfd, &sock_addr, LOGGED, logname);
+  printf("%d\n", temp);
+  //temp = Receive( sockfd, &re, sizeof(re), 0, "reclog");
   return 0;
 }
