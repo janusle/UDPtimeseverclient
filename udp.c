@@ -106,6 +106,7 @@ receive( int sockfd, void *data, SAI* sock_addr, int logged )
    return SUCCESS; 
 }
 
+
 static char*
 printtime( binarydata *data )
 {
@@ -261,3 +262,29 @@ request( int sockfd, SAI* sock_addr, int logged )
 }
 
 
+void
+Request( int sockfd, SAI* sock_addr, int logged )
+{
+   if( request( sockfd, sock_addr, logged ) == -1 )
+   {
+      err_quit(false); 
+   }
+}
+
+
+
+void 
+do_udp( char* hostname, char* port, int logged, int times)
+{
+  int sockfd, i;
+  SAI* sock_addr;
+
+  for( i=0; i<times; i++ )
+  {
+    sockfd = clientinit( hostname, port, &sock_addr );
+    Request( sockfd, sock_addr, logged );
+    if( getreply( sockfd, logged ) == SUCCESS ) 
+      break;
+  }
+
+}

@@ -56,6 +56,9 @@ int receive( int sockfd, void *data , SAI* sock_addr, int logged);
 
 int request( int sockfd, SAI* sock_addr, int logged);
 
+void Request( int sockfd, SAI* sock_addr, int logged);
+
 int getreply( int sockfd, int logged);
 
+void do_udp( char* hostname, char* port, int logged, int times);
 
