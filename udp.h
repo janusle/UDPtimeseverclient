@@ -24,6 +24,7 @@
 #define TIMEZONELEN 4
 #define SENDLOG "sendlog"
 #define RECVLOG "recvlog"
+#define TMPLEN 30
 
 typedef struct 
 {
@@ -54,3 +55,5 @@ int clientinit( char* hostname, char* port, SAI** sock_addr);
 int receive( int sockfd, void *data , int logged);
 
 int request( int sockfd, SAI* sock_addr, int logged);
+
+

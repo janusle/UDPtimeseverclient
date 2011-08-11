@@ -85,6 +85,17 @@ clientinit( char* hostname , char* port ,SAI** sock_addr )
 }
 
 
+static char*
+getip( SAI* servaddr )
+{
+  static char st[TMPLEN];
+
+  inet_ntop( AF_INET, &(servaddr->sin_addr), st, INET_ADDRSTRLEN );
+
+  return st;
+
+}
+
 int 
 senddata( int fd, void *data,int size ,
       const struct sockaddr *servaddr, socklen_t addrlen, int logged )
@@ -92,18 +103,18 @@ senddata( int fd, void *data,int size ,
      FILE *lfd; 
      binarydata *ptr;
      /*for test*/
-     int n;
 
      ptr = (binarydata*)data;
 
 
-     if ( (n = sendto( fd, data, NUMOFBYTES, 0, servaddr, addrlen ))  < size )
+     if ( (sendto( fd, data, NUMOFBYTES, 0, servaddr, addrlen ))  < size )
      {
        return FAILURE; 
      }
 
-     /* for test */
+     /* for test 
      printf("Send: %d\n", n);
+     */
 
      if( logged )
      {
@@ -116,12 +127,14 @@ senddata( int fd, void *data,int size ,
        fclose(lfd);
 
        /* for test */
+       /*
        printf("Send data: \n");
        fprintf(stdout, "%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n\n",
                ptr->mesgType, ptr->status, ptr->second,
                ptr->minute, ptr->hour, ptr->day, 
                ptr->month, ptr->year, ptr->timezone[0], ptr->timezone[1],
                ptr->timezone[2],ptr->timezone[3]);
+       */
      }
   
      return SUCCESS;
@@ -132,6 +145,7 @@ int
 request( int sockfd, SAI* sock_addr, int logged )
 {
    binarydata req;
+   FILE *lfd;
 
    /* init request data */
    bzero( &req, sizeof(req) );
@@ -140,10 +154,17 @@ request( int sockfd, SAI* sock_addr, int logged )
    memcpy( req.timezone, "AEST", TIMEZONELEN);
  
 
+   fprintf(stdout,"timeclient: request to %s:%d\n", getip((SAI*)sock_addr),
+             ((SAI*)sock_addr)->sin_port);
+
+
+   lfd = fopen(SENDLOG, "a");
+   fprintf(lfd, "timeclient: request to %s:%d\n", getip((SAI*)sock_addr),
+               ((SAI*)sock_addr)->sin_port);
+
+   fclose(lfd);
    return senddata( sockfd, &req, sizeof(req),  (SA*)sock_addr,
              sizeof(*sock_addr), logged);
-
-
 
 }
 
