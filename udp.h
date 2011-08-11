@@ -15,7 +15,7 @@
 #define DISCONNECTED 0
 #define LOGGED 1
 #define UNLOGGED 0
-#define NUMOFBYTES 17
+#define NUMOFBYTES 16
 #define SUCCESS 0
 #define FAILURE -1
 #define MAGICNUM 0xA3F0
@@ -47,13 +47,10 @@ typedef struct sockaddr_in SAI;
 int Socket( int family, int type, int protocol);
 
 int senddata( int fd, void *data, int size,
-             const struct sockaddr *servaddr, socklen_t addrlen,
-             int logged);
-
-int Read( int sockfd, void *data, int size, int logged);
+             const struct sockaddr *servaddr, socklen_t addrlen, int logged );
 
 int clientinit( char* hostname, char* port, SAI** sock_addr);
 
+int receive( int sockfd, void *data , int logged);
 
-
-
+int request( int sockfd, SAI* sock_addr, int logged);

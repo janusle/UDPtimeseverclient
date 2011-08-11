@@ -21,17 +21,20 @@ Socket( int family, int type, int protocol )
 
 
 int 
-Receive( int sockfd, void *data, size_t size, 
-         const struct sockaddr *servaddr, socklen_t addrlen,
-         int logged )
+receive( int sockfd, void *data, int logged )
 {
    FILE *lfd; 
    binarydata *ptr;
-   int n;
+   int n, addrlen;
+   SA servaddr;
+
    ptr = (binarydata*)data;
 
-   n = recvfrom( sockfd, data, NUMOFBYTES ,0 ,servaddr, &addrlen  );
-   
+   n = recvfrom( sockfd, data, NUMOFBYTES ,0 ,&servaddr, &addrlen  );
+  
+   /* for test */
+   printf("Recv: %d\n", n);
+
    if( n != NUMOFBYTES )
       return FAILURE;
 
@@ -41,6 +44,19 @@ Receive( int sockfd, void *data, size_t size,
    if( memcmp( (const char*)ptr->timezone, "AEST", TIMEZONELEN) != 0 )
       return FAILURE;
 
+   if( logged )
+   {
+     lfd = fopen(RECVLOG, "a");
+     
+     /*for test*/
+     printf("%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n",
+             ptr->mesgType, ptr->status, ptr->second,
+             ptr->minute, ptr->hour, ptr->day, 
+             ptr->month, ptr->year, ptr->timezone[0],
+             ptr->timezone[1], ptr->timezone[2],ptr->timezone[3]);
+
+     fclose(lfd);
+   }
    return SUCCESS; 
 }
 
@@ -75,16 +91,20 @@ senddata( int fd, void *data,int size ,
 {
      FILE *lfd; 
      binarydata *ptr;
+     /*for test*/
+     int n;
 
      ptr = (binarydata*)data;
 
 
-     if ( sendto( fd, data, NUMOFBYTES, 0, servaddr, addrlen ) < (int)size )
+     if ( (n = sendto( fd, data, NUMOFBYTES, 0, servaddr, addrlen ))  < size )
      {
        return FAILURE; 
      }
 
-     printf("%d\n", size);
+     /* for test */
+     printf("Send: %d\n", n);
+
      if( logged )
      {
        lfd = fopen(SENDLOG, "a");
@@ -96,7 +116,8 @@ senddata( int fd, void *data,int size ,
        fclose(lfd);
 
        /* for test */
-       fprintf(stdout, "%x\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n\n",
+       printf("Send data: \n");
+       fprintf(stdout, "%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n\n",
                ptr->mesgType, ptr->status, ptr->second,
                ptr->minute, ptr->hour, ptr->day, 
                ptr->month, ptr->year, ptr->timezone[0], ptr->timezone[1],
@@ -108,7 +129,7 @@ senddata( int fd, void *data,int size ,
 
 
 int 
-request( int sockfd, SAI* sock_addr, int connected, int logged )
+request( int sockfd, SAI* sock_addr, int logged )
 {
    binarydata req;
 
