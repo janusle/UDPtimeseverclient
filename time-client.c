@@ -21,7 +21,7 @@ main(int argc, char** argv)
   /*inet_ntop(AF_INET, &(sock_addr->sin_addr), test, 16);*/
 
   request( sockfd, sock_addr, LOGGED);
-  temp = getreply( sockfd, LOGGED, 3);
+  temp = getreply( sockfd, LOGGED);
 
   
   return 0;

@@ -31,6 +31,24 @@ Socket( int family, int type, int protocol )
 }
 
 
+static int 
+checkdata( binarydata *data )
+{
+   if( data->second <=59 &&
+       data->minute <=59 &&
+       data->hour <=23 &&
+       data->day >=1 && data->day <=31 &&
+       data->month >=1 && data->month <=12 &&
+       data->year >=1 && data->year <=9999 
+     )
+   {
+      return true;
+   }
+
+   return false;
+}
+
+
 int 
 receive( int sockfd, void *data, SAI* sock_addr, int logged )
 {
@@ -55,6 +73,9 @@ receive( int sockfd, void *data, SAI* sock_addr, int logged )
       return FAILURE;  
   
    if( memcmp( (const char*)ptr->timezone, "AEST", TIMEZONELEN) != 0 )
+      return FAILURE;
+
+   if( checkdata(ptr) == false )
       return FAILURE;
 
    if( logged )
@@ -82,34 +103,41 @@ receive( int sockfd, void *data, SAI* sock_addr, int logged )
 }
 
 
-int getreply( int sockfd, int logged , int times)
+
+int getreply( int sockfd, int logged)
 {
    binarydata data; 
-   int i;
    FILE *lfd;
    SAI *sock_addr;  
    
    sock_addr = (SAI*)malloc(sizeof(SAI));
 
    bzero( sock_addr, sizeof(SAI) );
-   for(i=0; i<times; i++)
+   if ( receive( sockfd, &data, sock_addr, logged ) == FAILURE )
    {
-     if( receive( sockfd, &data, sock_addr, logged ) == SUCCESS )
-        break; 
+       
+     /* log */
+     lfd = fopen(RECVLOG, "a");
+     fprintf(lfd,"timeclient: reply from %s:%d is invalid\n\n\n", getip(sock_addr),
+             sock_addr->sin_port);
+     fclose(lfd);
+      
+     fprintf(stdout,"timeclient: reply from %s:%d is invalid\n", getip(sock_addr),
+             sock_addr->sin_port);
+
+     return FAILURE;
    }
 
-   if( i >= times )
-    return FAILURE;
 
   
    
    /* log */
    lfd = fopen(RECVLOG, "a");
-   fprintf(lfd,"timeclient: reply from %s:%d\n\n\n", getip(sock_addr),
+   fprintf(lfd,"timeclient: reply from %s:%d is good\n\n\n", getip(sock_addr),
              sock_addr->sin_port);
    fclose(lfd);
       
-   fprintf(stdout,"timeclient: reply from %s:%d\n", getip(sock_addr),
+   fprintf(stdout,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
              sock_addr->sin_port);
 
 

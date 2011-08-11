@@ -56,6 +56,6 @@ int receive( int sockfd, void *data , SAI* sock_addr, int logged);
 
 int request( int sockfd, SAI* sock_addr, int logged);
 
-int getreply( int sockfd, int logged , int times);
+int getreply( int sockfd, int logged);
 
 
