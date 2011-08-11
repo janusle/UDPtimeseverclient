@@ -19,5 +19,6 @@ clean:
 	-rm *.o
 	-rm time-client
 	-rm core
-
+	-rm recvlog
+	-rm sendlog
 

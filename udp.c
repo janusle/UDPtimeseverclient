@@ -4,6 +4,19 @@
 extern int errno;
 
 
+
+static char*
+getip( SAI* servaddr )
+{
+  static char st[TMPLEN];
+
+  inet_ntop( AF_INET, &(servaddr->sin_addr), st, INET_ADDRSTRLEN );
+
+  return st;
+
+}
+
+
 int 
 Socket( int family, int type, int protocol )
 {
@@ -18,22 +31,22 @@ Socket( int family, int type, int protocol )
 }
 
 
-
-
 int 
-receive( int sockfd, void *data, int logged )
+receive( int sockfd, void *data, SAI* sock_addr, int logged )
 {
    FILE *lfd; 
    binarydata *ptr;
    int n, addrlen;
-   SA servaddr;
 
    ptr = (binarydata*)data;
 
-   n = recvfrom( sockfd, data, NUMOFBYTES ,0 ,&servaddr, &addrlen  );
-  
+   n = recvfrom( sockfd, data, NUMOFBYTES ,0 ,(SA*)sock_addr, &addrlen  );
+ 
    /* for test */
+   /*
    printf("Recv: %d\n", n);
+   */
+
 
    if( n != NUMOFBYTES )
       return FAILURE;
@@ -46,18 +59,61 @@ receive( int sockfd, void *data, int logged )
 
    if( logged )
    {
-     lfd = fopen(RECVLOG, "a");
-     
-     /*for test*/
-     printf("%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n",
+     lfd = fopen(RECVLOG, "a"); 
+
+
+     fprintf(lfd, "%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n",
              ptr->mesgType, ptr->status, ptr->second,
              ptr->minute, ptr->hour, ptr->day, 
              ptr->month, ptr->year, ptr->timezone[0],
              ptr->timezone[1], ptr->timezone[2],ptr->timezone[3]);
 
+     /*for test*/
+     /*
+     printf("%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n",
+             ptr->mesgType, ptr->status, ptr->second,
+             ptr->minute, ptr->hour, ptr->day, 
+             ptr->month, ptr->year, ptr->timezone[0],
+             ptr->timezone[1], ptr->timezone[2],ptr->timezone[3]);
+     */
      fclose(lfd);
    }
    return SUCCESS; 
+}
+
+
+int getreply( int sockfd, int logged , int times)
+{
+   binarydata data; 
+   int i;
+   FILE *lfd;
+   SAI *sock_addr;  
+   
+   sock_addr = (SAI*)malloc(sizeof(SAI));
+
+   bzero( sock_addr, sizeof(SAI) );
+   for(i=0; i<times; i++)
+   {
+     if( receive( sockfd, &data, sock_addr, logged ) == SUCCESS )
+        break; 
+   }
+
+   if( i >= times )
+    return FAILURE;
+
+  
+   
+   /* log */
+   lfd = fopen(RECVLOG, "a");
+   fprintf(lfd,"timeclient: reply from %s:%d\n\n\n", getip(sock_addr),
+             sock_addr->sin_port);
+   fclose(lfd);
+      
+   fprintf(stdout,"timeclient: reply from %s:%d\n", getip(sock_addr),
+             sock_addr->sin_port);
+
+
+   return SUCCESS;
 }
 
 
@@ -84,17 +140,6 @@ clientinit( char* hostname , char* port ,SAI** sock_addr )
 
 }
 
-
-static char*
-getip( SAI* servaddr )
-{
-  static char st[TMPLEN];
-
-  inet_ntop( AF_INET, &(servaddr->sin_addr), st, INET_ADDRSTRLEN );
-
-  return st;
-
-}
 
 int 
 senddata( int fd, void *data,int size ,

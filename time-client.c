@@ -8,8 +8,6 @@ main(int argc, char** argv)
   int sockfd;
   int temp;
   SAI* sock_addr;
-  char test[16];
-  binarydata re;
   
   if( argc < 2 )
   {
@@ -23,7 +21,7 @@ main(int argc, char** argv)
   /*inet_ntop(AF_INET, &(sock_addr->sin_addr), test, 16);*/
 
   request( sockfd, sock_addr, LOGGED);
-  temp = receive( sockfd, &re , LOGGED );
+  temp = getreply( sockfd, LOGGED, 3);
 
   
   return 0;

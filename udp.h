@@ -52,8 +52,10 @@ int senddata( int fd, void *data, int size,
 
 int clientinit( char* hostname, char* port, SAI** sock_addr);
 
-int receive( int sockfd, void *data , int logged);
+int receive( int sockfd, void *data , SAI* sock_addr, int logged);
 
 int request( int sockfd, SAI* sock_addr, int logged);
+
+int getreply( int sockfd, int logged , int times);
 
 
