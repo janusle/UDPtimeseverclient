@@ -76,12 +76,10 @@ receive( int sockfd, void *data, SAI* sock_addr, int logged )
       return FAILURE;
 
 
-   if( logged )
-   {
-     lfd = fopen(RECVLOG, "a"); 
+   lfd = fopen(RECVLOG, "a"); 
 
 
-     fprintf(lfd, "%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n",
+   fprintf(lfd, "%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n",
              ptr->mesgType, ptr->status, ptr->second,
              ptr->minute, ptr->hour, ptr->day, 
              ptr->month, ptr->year, ptr->timezone[0],
@@ -96,8 +94,7 @@ receive( int sockfd, void *data, SAI* sock_addr, int logged )
              ptr->month, ptr->year, ptr->timezone[0],
              ptr->timezone[1], ptr->timezone[2],ptr->timezone[3]);
      */
-     fclose(lfd);
-   }
+   fclose(lfd);
 
 
    if( checkdata(ptr) == false )
@@ -139,9 +136,12 @@ int getreply( int sockfd, int logged)
      fprintf(lfd,"timeclient: reply from %s:%d is invalid\n\n\n", getip(sock_addr),
              sock_addr->sin_port);
      fclose(lfd);
-      
-     fprintf(stdout,"timeclient: reply from %s:%d is invalid\n", getip(sock_addr),
+  
+
+     if( logged )
+      fprintf(stderr,"timeclient: reply from %s:%d is invalid\n", getip(sock_addr),
              sock_addr->sin_port);
+
 
      return FAILURE;
    }
@@ -156,11 +156,14 @@ int getreply( int sockfd, int logged)
 
    fprintf(lfd,"%s\n", printtime(&data));    
    fclose(lfd);
-      
-   fprintf(stdout,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
+
+   if( logged )
+   {
+    fprintf(stderr,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
              sock_addr->sin_port);
-   fprintf(stdout,"%s", printtime(&data));    
- 
+    fprintf(stderr,"%s", printtime(&data));    
+   } 
+
    return SUCCESS;
 }
 
@@ -209,15 +212,13 @@ senddata( int fd, void *data,int size ,
      printf("Send: %d\n", n);
      */
 
-     if( logged )
-     {
-       lfd = fopen(SENDLOG, "a");
-       fprintf(lfd, "%x\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n\n",
+    lfd = fopen(SENDLOG, "a");
+    fprintf(lfd, "%x\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n\n",
                ptr->mesgType, ptr->status, ptr->second,
                ptr->minute, ptr->hour, ptr->day, 
                ptr->month, ptr->year, ptr->timezone[0], ptr->timezone[1],
                ptr->timezone[2], ptr->timezone[3]);
-       fclose(lfd);
+    fclose(lfd);
 
        /* for test */
        /*
@@ -228,7 +229,6 @@ senddata( int fd, void *data,int size ,
                ptr->month, ptr->year, ptr->timezone[0], ptr->timezone[1],
                ptr->timezone[2],ptr->timezone[3]);
        */
-     }
   
      return SUCCESS;
 }
@@ -247,7 +247,8 @@ request( int sockfd, SAI* sock_addr, int logged )
    memcpy( req.timezone, "AEST", TIMEZONELEN);
  
 
-   fprintf(stdout,"timeclient: request to %s:%d\n", getip((SAI*)sock_addr),
+   if( logged )
+    fprintf(stderr,"timeclient: request to %s:%d\n", getip((SAI*)sock_addr),
              ((SAI*)sock_addr)->sin_port);
 
 
