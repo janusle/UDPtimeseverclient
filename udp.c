@@ -75,8 +75,6 @@ receive( int sockfd, void *data, SAI* sock_addr, int logged )
    if( memcmp( (const char*)ptr->timezone, "AEST", TIMEZONELEN) != 0 )
       return FAILURE;
 
-   if( checkdata(ptr) == false )
-      return FAILURE;
 
    if( logged )
    {
@@ -89,6 +87,7 @@ receive( int sockfd, void *data, SAI* sock_addr, int logged )
              ptr->month, ptr->year, ptr->timezone[0],
              ptr->timezone[1], ptr->timezone[2],ptr->timezone[3]);
 
+
      /*for test*/
      /*
      printf("%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n",
@@ -99,9 +98,27 @@ receive( int sockfd, void *data, SAI* sock_addr, int logged )
      */
      fclose(lfd);
    }
+
+
+   if( checkdata(ptr) == false )
+      return FAILURE;
+
    return SUCCESS; 
 }
 
+static char*
+printtime( binarydata *data )
+{
+  static char tmp[TMPLEN];
+  sprintf( tmp, "%d:%d:%d %d-%d-%d %c%c%c%c\n",
+            data->hour, data->minute, data->second,
+            data->day, data->month, data->year,
+            data->timezone[0], data->timezone[1],
+            data->timezone[2], data->timezone[3]);
+  return tmp;
+
+
+}
 
 
 int getreply( int sockfd, int logged)
@@ -133,14 +150,16 @@ int getreply( int sockfd, int logged)
    
    /* log */
    lfd = fopen(RECVLOG, "a");
-   fprintf(lfd,"timeclient: reply from %s:%d is good\n\n\n", getip(sock_addr),
+   fprintf(lfd,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
              sock_addr->sin_port);
+
+   fprintf(lfd,"%s\n", printtime(&data));    
    fclose(lfd);
       
    fprintf(stdout,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
              sock_addr->sin_port);
-
-
+   fprintf(stdout,"%s", printtime(&data));    
+ 
    return SUCCESS;
 }
 
