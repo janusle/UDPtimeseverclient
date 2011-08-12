@@ -48,11 +48,11 @@ typedef struct sockaddr_in SAI;
 int Socket( int family, int type, int protocol);
 
 int senddata( int fd, void *data, int size,
-             const struct sockaddr *servaddr, socklen_t addrlen, int logged );
+             const struct sockaddr *servaddr, socklen_t addrlen);
 
 int clientinit( char* hostname, char* port, SAI** sock_addr);
 
-int receive( int sockfd, void *data , SAI* sock_addr, int logged);
+int receive( int sockfd, void *data , SAI* sock_addr);
 
 int request( int sockfd, SAI* sock_addr, int logged);
 

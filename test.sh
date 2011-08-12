@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./time-client "aaa bbb"
+./time-client client.config

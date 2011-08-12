@@ -5,12 +5,17 @@ char**
 explode( char* line )
 {
   static char* array[ARRAYLEN];
-  
+  int len;
+
   array[0] = (char*)Malloc( sizeof(char) * LEN );
   array[1] = (char*)Malloc( sizeof(char) * LEN );
 
   strcpy(array[0], strtok( line, " " ));
   strcpy(array[1], strtok( NULL, " " ));
+  
+  /* cut newline */
+  len = strlen(array[1]);
+  array[1][len-1] = '\0';
 
   return array;
 }
@@ -145,11 +150,46 @@ init( char* filename , char* config[] )
         strcpy( config[REQ_TIMEOUT], tmp[VALUE] );
       }
 
+
+
       /*
       printf("%s %s\n", tmp[OPTION], tmp[VALUE]);
       */
     }
   }
+
+
+
+  /* set default value */
+  if( (config[SERVER_ADDRESS] == NULL &&
+      config[SERVER_NAME] == NULL) ||
+      config[SERVER_PORT] == NULL )
+  {
+    fprintf(stderr, "Bad format in config file\n");
+    exit(-1);
+  }
+
+
+  if( config[PRINT_MSG] == NULL )
+  {
+    config[PRINT_MSG] = (char*)Malloc( sizeof(char)*LEN );
+    strcpy( config[PRINT_MSG], "ON");
+  }
+
+
+  if( config[REQ_COUNT] == NULL )
+  {
+    config[REQ_COUNT] = (char*)Malloc( sizeof(char)*LEN );
+    strcpy( config[REQ_COUNT], TIMES);
+  }
+
+
+  if( config[REQ_TIMEOUT] == NULL )
+  {
+    config[REQ_TIMEOUT] = (char*)Malloc( sizeof(char)*LEN );
+    strcpy( config[REQ_TIMEOUT], TIMEOUT);
+  }
+
 
   fclose(fd); 
 }

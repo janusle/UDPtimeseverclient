@@ -50,7 +50,7 @@ checkdata( binarydata *data )
 
 
 int 
-receive( int sockfd, void *data, SAI* sock_addr, int logged )
+receive( int sockfd, void *data, SAI* sock_addr)
 {
    FILE *lfd; 
    binarydata *ptr;
@@ -128,7 +128,7 @@ int getreply( int sockfd, int logged)
    sock_addr = (SAI*)malloc(sizeof(SAI));
 
    bzero( sock_addr, sizeof(SAI) );
-   if ( receive( sockfd, &data, sock_addr, logged ) == FAILURE )
+   if ( receive( sockfd, &data, sock_addr) == FAILURE )
    {
        
      /* log */
@@ -194,7 +194,7 @@ clientinit( char* hostname , char* port ,SAI** sock_addr )
 
 int 
 senddata( int fd, void *data,int size ,
-      const struct sockaddr *servaddr, socklen_t addrlen, int logged )
+      const struct sockaddr *servaddr, socklen_t addrlen)
 {
      FILE *lfd; 
      binarydata *ptr;
@@ -258,7 +258,7 @@ request( int sockfd, SAI* sock_addr, int logged )
 
    fclose(lfd);
    return senddata( sockfd, &req, sizeof(req),  (SA*)sock_addr,
-             sizeof(*sock_addr), logged);
+             sizeof(*sock_addr) );
 
 }
 

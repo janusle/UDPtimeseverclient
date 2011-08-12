@@ -25,3 +25,6 @@ clean:
 	-rm recvlog
 	-rm sendlog
 
+cleanlog:
+	-rm recvlog
+	-rm sendlog
