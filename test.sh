@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./time-client aaa
+./time-client "aaa bbb"
