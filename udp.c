@@ -124,7 +124,6 @@ settimeout( int fd, int sec )
   struct timeval t;
   fd_set rest;
 
-
   t.tv_sec = sec;
   t.tv_usec = 0;
   
