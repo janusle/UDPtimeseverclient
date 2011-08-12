@@ -148,9 +148,9 @@ getreply( int sockfd, int logged, int timeout )
 
    if( settimeout( sockfd, timeout ) <= 0 )
    {
-     fprintf(stdout, "timeout %d second(s)\n", timeout);
+     fprintf(stdout, "timeclient: timeout-no reply\n");
      lfd = fopen(RECVLOG, "a");
-     fprintf(lfd,"timeout %d second(s)\n\n", timeout);
+     fprintf(lfd,"timeclient: timeout-no reply\n\n");
      fclose(lfd);
      return FAILURE;
    }
