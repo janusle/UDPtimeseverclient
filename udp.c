@@ -180,6 +180,7 @@ clientinit( char* hostname , char* port ,SAI** sock_addr )
   
   if( getaddrinfo( hostname, port, &hints, &res) != 0 )
   {
+     fprintf(stderr, "Cannot resolve hostname\n");
      err_quit(false);
   }
 
