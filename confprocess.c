@@ -5,18 +5,26 @@ char**
 explode( char* line )
 {
   static char* array[ARRAYLEN];
-  int len;
+  int i, size;
 
   array[0] = (char*)Malloc( sizeof(char) * LEN );
   array[1] = (char*)Malloc( sizeof(char) * LEN );
 
+  size = strlen(line);
+  for( i=0; !isspace(line[i]) && i<size ;i++)
+  ;
+
+  memcpy( array[0], line, i );
+
+  for(; isspace(line[i]) && i<size; i++)
+  ;
+
+  strcpy( array[1], line+i);
+
+  /*
   strcpy(array[0], strtok( line, " " ));
   strcpy(array[1], strtok( NULL, " " ));
-  
-  /* cut newline */
-  len = strlen(array[1]);
-  array[1][len-1] = '\0';
-
+  */ 
   return array;
 }
 
@@ -36,6 +44,39 @@ Malloc( size_t size )
 }
 
 
+static void 
+trim( char* line )
+{
+   char *st;
+   int size, i;
+   
+   size = strlen(line);
+
+   /* skip space */
+   for(i=0; i<size && isspace(line[i]); i++)
+   ;
+
+   /* all the items in the line is space */
+   if( i >= size )
+    line[0] = '\0';
+   
+   /* cut the space in the front */
+   st = (char*)Malloc( sizeof(char)*LEN); 
+   strcpy( st, line+i );
+   
+   size = strlen(st);
+  
+   
+   for( i = size-1; isspace(st[i]) && i>=0 ; i-- ) 
+   ;     
+   
+   st[i+1] = '\0';
+   
+
+   strcpy(line, st);
+}
+
+
 static char* 
 getline( char *line, FILE* fd )
 {
@@ -43,7 +84,7 @@ getline( char *line, FILE* fd )
    int i;
     
    i=0;
-   while( ( c = fgetc(fd)) != '\n' && c != EOF )
+   while( ( ( c = fgetc(fd)) != '\n' &&  c != '\r' ) && c != EOF )
    {
       line[i++] = c;
    }
@@ -52,6 +93,8 @@ getline( char *line, FILE* fd )
      return NULL;
 
    line[i] = '\0';
+  
+   trim( line );    
 
    return line;
 }
@@ -61,8 +104,10 @@ void
 init( char* filename , char* config[] )
 {
   FILE* fd;
-  char line[LINENUM], **tmp;
+  char *line, **tmp;
   int i;
+
+  line = (char*)malloc( sizeof(char) * LINENUM);
 
   fd = fopen(filename, "r");
   if( fd == NULL )
@@ -76,9 +121,10 @@ init( char* filename , char* config[] )
 
   while( (getline(line,  fd ) != NULL) )
   {
+
     if( isalpha(line[0]) )
     {
-      
+
       tmp = explode( line );
       if( strcmp( "server_address", tmp[OPTION] ) == 0 )
       {
@@ -157,8 +203,6 @@ init( char* filename , char* config[] )
       */
     }
   }
-
-
 
   /* set default value */
   if( (config[SERVER_ADDRESS] == NULL &&

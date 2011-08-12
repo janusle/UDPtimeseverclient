@@ -7,7 +7,7 @@ int
 main(int argc, char** argv)
 {
   char* config[CONFLEN]; 
-  int logged;
+  int logged, count, timeout;
 
   if( argc < 2 )
   {
@@ -17,6 +17,15 @@ main(int argc, char** argv)
 
 
   init( argv[1], config );
+  
+  count = atoi(config[REQ_COUNT]);
+  timeout = atoi(config[REQ_TIMEOUT]);
+ 
+  /* set default count if need */
+  if( count == 0 )
+    count = atoi(TIMES);
+   
+
   if( config[SERVER_ADDRESS] != NULL &&
       config[SERVER_PORT] != NULL )
   {
@@ -29,9 +38,9 @@ main(int argc, char** argv)
      do_udp( config[SERVER_ADDRESS], 
              config[SERVER_PORT],
              logged,
-             atoi(config[REQ_COUNT]),
-             atoi(config[REQ_TIMEOUT])
-            );
+             count,
+             timeout
+           );
 
   }
   else if( config[SERVER_NAME] != NULL &&
@@ -46,8 +55,8 @@ main(int argc, char** argv)
      do_udp( config[SERVER_NAME], 
              config[SERVER_PORT],
              logged,
-             atoi(config[REQ_COUNT]),
-             atoi(config[REQ_TIMEOUT])
+             count,
+             timeout
             );
 
   }

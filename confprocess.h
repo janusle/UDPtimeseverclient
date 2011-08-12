@@ -6,7 +6,7 @@
 
 #define LINENUM 200
 #define ARRAYLEN 2
-#define LEN 30
+#define LEN 150
 
 #define SERVER_ADDRESS 0
 #define SERVER_NAME 1
