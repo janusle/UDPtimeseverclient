@@ -2,10 +2,12 @@
 #include "error.h"
 #include "confprocess.h"
 
+
 int 
 main(int argc, char** argv)
 {
-  char** tmp; 
+  char* config[CONFLEN]; 
+  int i;
 
   if( argc < 2 )
   {
@@ -14,11 +16,22 @@ main(int argc, char** argv)
   }
 
 
+  init( "client.config", config );
+ 
+
+
+  /*
+  for(i=0; i<CONFLEN; i++)
+  {
+    if( config[i] != NULL )
+      printf("%s\n", config[i]);    
+  }
+  */
   /* for test */
-   
+  /* 
   tmp = explode( argv[1] );
   printf("%s\n%s\n", tmp[0], tmp[1]);
-  
+  */ 
   /*inet_ntop(AF_INET, &(sock_addr->sin_addr), test, 16);*/
    
    
