@@ -8,6 +8,7 @@
 #include<strings.h>
 #include<string.h>
 #include<netdb.h>
+#include<sys/select.h>
 
 #include "error.h"
 
@@ -58,8 +59,8 @@ int request( int sockfd, SAI* sock_addr, int logged);
 
 void Request( int sockfd, SAI* sock_addr, int logged);
 
-int getreply( int sockfd, int logged);
+int getreply( int sockfd, int logged, int timeout);
 
-void do_udp( char* hostname, char* port, int logged, int times);
+void do_udp( char* hostname, char* port, int logged, int times, int timeout);
 
 

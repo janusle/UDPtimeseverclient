@@ -29,7 +29,8 @@ main(int argc, char** argv)
      do_udp( config[SERVER_ADDRESS], 
              config[SERVER_PORT],
              logged,
-             atoi(config[REQ_COUNT])
+             atoi(config[REQ_COUNT]),
+             atoi(config[REQ_TIMEOUT])
             );
 
   }
@@ -45,7 +46,8 @@ main(int argc, char** argv)
      do_udp( config[SERVER_NAME], 
              config[SERVER_PORT],
              logged,
-             atoi(config[REQ_COUNT])
+             atoi(config[REQ_COUNT]),
+             atoi(config[REQ_TIMEOUT])
             );
 
   }

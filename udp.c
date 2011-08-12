@@ -4,7 +4,6 @@
 extern int errno;
 
 
-
 static char*
 getip( SAI* servaddr )
 {
@@ -119,7 +118,26 @@ printtime( binarydata *data )
 }
 
 
-int getreply( int sockfd, int logged)
+static int 
+settimeout( int fd, int sec )
+{
+  struct timeval t;
+  fd_set rest;
+
+
+  t.tv_sec = sec;
+  t.tv_usec = 0;
+  
+  /*FD_ZERO(&rest);*/
+
+  /*bzero(&rest, sizeof(rest));*/
+  FD_SET(fd, &rest);
+  return select(fd+1, &rest, NULL,NULL,&t);
+}
+
+
+int 
+getreply( int sockfd, int logged, int timeout )
 {
    binarydata data; 
    FILE *lfd;
@@ -128,16 +146,26 @@ int getreply( int sockfd, int logged)
    sock_addr = (SAI*)malloc(sizeof(SAI));
 
    bzero( sock_addr, sizeof(SAI) );
+
+   if( settimeout( sockfd, timeout ) <= 0 )
+   {
+     fprintf(stdout, "timeout %d second(s)\n", timeout);
+     lfd = fopen(RECVLOG, "a");
+     fprintf(lfd,"timeout %d second(s)\n\n", timeout);
+     fclose(lfd);
+     return FAILURE;
+   }
+
    if ( receive( sockfd, &data, sock_addr) == FAILURE )
    {
        
-     /* log */
      lfd = fopen(RECVLOG, "a");
      fprintf(lfd,"timeclient: reply from %s:%d is invalid\n\n\n", getip(sock_addr),
              sock_addr->sin_port);
      fclose(lfd);
   
 
+     /* log */
      if( logged )
       fprintf(stderr,"timeclient: reply from %s:%d is invalid\n", getip(sock_addr),
              sock_addr->sin_port);
@@ -149,11 +177,11 @@ int getreply( int sockfd, int logged)
 
   
    
-   /* log */
    lfd = fopen(RECVLOG, "a");
    fprintf(lfd,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
              sock_addr->sin_port);
 
+   /* log */
    fprintf(lfd,"%s\n", printtime(&data));    
    fclose(lfd);
 
@@ -275,7 +303,7 @@ Request( int sockfd, SAI* sock_addr, int logged )
 
 
 void 
-do_udp( char* hostname, char* port, int logged, int times)
+do_udp( char* hostname, char* port, int logged, int times, int timeout)
 {
   int sockfd, i;
   SAI* sock_addr;
@@ -284,7 +312,7 @@ do_udp( char* hostname, char* port, int logged, int times)
   {
     sockfd = clientinit( hostname, port, &sock_addr );
     Request( sockfd, sock_addr, logged );
-    if( getreply( sockfd, logged ) == SUCCESS ) 
+    if( getreply( sockfd, logged ,timeout) == SUCCESS ) 
       break;
   }
 
