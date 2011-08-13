@@ -38,7 +38,8 @@ checkdata( binarydata *data )
        data->hour <=23 &&
        data->day >=1 && data->day <=31 &&
        data->month >=1 && data->month <=12 &&
-       data->year >=1 && data->year <=9999 
+       data->year >=1 && data->year <=9999 &&
+       data->status == 0xB4 
      )
    {
       return true;

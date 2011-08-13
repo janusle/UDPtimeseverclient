@@ -3,8 +3,10 @@
 void 
 err_quit(bool u)
 {
-  
-  perror("time-client");
+
+  if( errno != 0 )
+   perror("time-client");
+
   if( u )
   {
     usage();
