@@ -4,7 +4,7 @@ void
 err_quit(bool u)
 {
   
-  perror("");
+  perror("time-client");
   if( u )
   {
     usage();
@@ -16,5 +16,5 @@ err_quit(bool u)
 void 
 usage()
 {
-  fprintf(stderr, "Usage: gethttp URL filename\n"); 
+  fprintf(stderr, "Usage: time-client configfile\n"); 
 }

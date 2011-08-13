@@ -78,7 +78,7 @@ trim( char* line )
 
 
 static char* 
-getline( char *line, FILE* fd )
+getl( char *line, FILE* fd )
 {
    char c; 
    int i;
@@ -107,7 +107,7 @@ init( char* filename , char* config[] )
   char *line, **tmp;
   int i;
 
-  line = (char*)malloc( sizeof(char) * LINENUM);
+  line = (char*)Malloc( sizeof(char*) * LINENUM);
 
   fd = fopen(filename, "r");
   if( fd == NULL )
@@ -116,10 +116,10 @@ init( char* filename , char* config[] )
      exit(-1);
   }
 
-  for(i=0; i<LINENUM; i++)
+  for(i=0; i<CONFLEN; i++)
     config[i] = NULL;
 
-  while( (getline(line,  fd ) != NULL) )
+  while( (getl(line,  fd ) != NULL) )
   {
 
     if( isalpha(line[0]) )

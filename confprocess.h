@@ -4,7 +4,7 @@
 #include<ctype.h>
 #include "error.h"
 
-#define LINENUM 200
+#define LINENUM 150
 #define ARRAYLEN 2
 #define LEN 150
 
