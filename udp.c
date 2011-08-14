@@ -160,15 +160,17 @@ getreply( int sockfd, int logged, int timeout )
    {
        
      lfd = fopen(RECVLOG, "a");
-     fprintf(lfd,"timeclient: reply from %s:%d is invalid\n\n\n", getip(sock_addr),
-             sock_addr->sin_port);
+     fprintf(lfd,"timeclient: reply from %s:%d is invalid\n\n\n", 
+             getip(sock_addr),
+             ntohs(sock_addr->sin_port) );
      fclose(lfd);
   
 
      /* log */
      if( logged )
-      fprintf(stderr,"timeclient: reply from %s:%d is invalid\n", getip(sock_addr),
-             sock_addr->sin_port);
+      fprintf(stderr,"timeclient: reply from %s:%d is invalid\n", 
+              getip(sock_addr),
+             ntohs(sock_addr->sin_port) );
 
 
      return FAILURE;
@@ -178,8 +180,9 @@ getreply( int sockfd, int logged, int timeout )
   
    
    lfd = fopen(RECVLOG, "a");
-   fprintf(lfd,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
-             ntohs( sock_addr->sin_port) );
+   fprintf(lfd,"timeclient: reply from %s:%d is good\n", 
+           getip(sock_addr),
+           ntohs( sock_addr->sin_port) );
 
    /* log */
    fprintf(lfd,"%s\n", printtime(&data));    
@@ -187,8 +190,9 @@ getreply( int sockfd, int logged, int timeout )
 
    if( logged )
    {
-    fprintf(stderr,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
-             ntohs(sock_addr->sin_port) );
+    fprintf(stderr,"timeclient: reply from %s:%d is good\n", 
+            getip(sock_addr),
+            ntohs(sock_addr->sin_port) );
     fprintf(stderr,"%s", printtime(&data));    
    } 
 
@@ -242,7 +246,7 @@ senddata( int fd, void *data,int size ,
      */
 
     lfd = fopen(SENDLOG, "a");
-    fprintf(lfd, "%x\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n\n",
+    fprintf(lfd, "%x\n%x\n%d\n%d\n%d\n%d\n%d\n%d\n%c%c%c%c\n\n",
                ptr->mesgType, ptr->status, ptr->second,
                ptr->minute, ptr->hour, ptr->day, 
                ptr->month, ptr->year, ptr->timezone[0], ptr->timezone[1],
