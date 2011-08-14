@@ -179,7 +179,7 @@ getreply( int sockfd, int logged, int timeout )
    
    lfd = fopen(RECVLOG, "a");
    fprintf(lfd,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
-             sock_addr->sin_port);
+             ntohs( sock_addr->sin_port) );
 
    /* log */
    fprintf(lfd,"%s\n", printtime(&data));    
@@ -188,7 +188,7 @@ getreply( int sockfd, int logged, int timeout )
    if( logged )
    {
     fprintf(stderr,"timeclient: reply from %s:%d is good\n", getip(sock_addr),
-             sock_addr->sin_port);
+             ntohs(sock_addr->sin_port) );
     fprintf(stderr,"%s", printtime(&data));    
    } 
 
@@ -278,12 +278,12 @@ request( int sockfd, SAI* sock_addr, int logged )
 
    if( logged )
     fprintf(stderr,"timeclient: request to %s:%d\n", getip((SAI*)sock_addr),
-             ((SAI*)sock_addr)->sin_port);
+        ntohs( ((SAI*)sock_addr)->sin_port ));
 
 
    lfd = fopen(SENDLOG, "a");
    fprintf(lfd, "timeclient: request to %s:%d\n", getip((SAI*)sock_addr),
-               ((SAI*)sock_addr)->sin_port);
+              ntohs( ((SAI*)sock_addr)->sin_port) );
 
    fclose(lfd);
    return senddata( sockfd, &req, sizeof(req),  (SA*)sock_addr,

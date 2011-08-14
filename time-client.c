@@ -34,7 +34,7 @@ main(int argc, char** argv)
         logged = LOGGED;
      else
         logged = UNLOGGED;
-
+     
      do_udp( config[SERVER_ADDRESS], 
              config[SERVER_PORT],
              logged,
