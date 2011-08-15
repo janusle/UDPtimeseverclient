@@ -309,9 +309,10 @@ Request( int sockfd, SAI* sock_addr, int logged )
 void 
 do_udp( char* hostname, char* port, int logged, int times, int timeout)
 {
-  int sockfd, i;
-  SAI* sock_addr;
-
+  int sockfd, i, tmpsize;
+  SAI* sock_addr, tmp;
+  
+  tmpsize = sizeof(tmp);
   for( i=0; i<times; i++ )
   {
     sockfd = clientinit( hostname, port, &sock_addr );
