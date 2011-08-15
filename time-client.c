@@ -7,7 +7,7 @@ int
 main(int argc, char** argv)
 {
   char* config[CONFLEN]; 
-  int logged, count, timeout;
+  int logged, count, timeout, port;
 
   if( argc < 2 )
   {
@@ -20,11 +20,19 @@ main(int argc, char** argv)
   
   count = atoi(config[REQ_COUNT]);
   timeout = atoi(config[REQ_TIMEOUT]);
- 
+  port = atoi( config[SERVER_PORT] );
+
+  if( port == 0 )
+  {
+     fprintf(stderr, "invalid port\n");
+     exit(-1);
+  }
+
   /* set default count if need */
   if( count == 0 )
     count = atoi(TIMES);
-   
+
+
 
   if( config[SERVER_ADDRESS] != NULL &&
       config[SERVER_PORT] != NULL )
