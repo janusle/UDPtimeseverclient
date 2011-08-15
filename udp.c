@@ -58,6 +58,8 @@ receive( int sockfd, void *data, SAI* sock_addr)
    unsigned addrlen;
    ptr = (binarydata*)data;
 
+   addrlen = sizeof(SAI);
+
    n = recvfrom( sockfd, data, NUMOFBYTES ,0 ,(SA*)sock_addr, &addrlen  );
  
    /* for test */
@@ -128,7 +130,7 @@ settimeout( int fd, int sec )
   t.tv_sec = sec;
   t.tv_usec = 0;
   
-  /*FD_ZERO(&rest);*/
+  FD_ZERO(&rest);
 
   /*bzero(&rest, sizeof(rest));*/
   FD_SET(fd, &rest);
