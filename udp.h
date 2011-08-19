@@ -45,8 +45,12 @@ typedef struct sockaddr SA;
 
 typedef struct sockaddr_in SAI;
 
-
+/* wrapper functions */
 int Socket( int family, int type, int protocol);
+
+void Request( int sockfd, SAI* sock_addr, int logged);
+
+
 
 int senddata( int fd, void *data, int size,
              const struct sockaddr *servaddr, socklen_t addrlen);
@@ -57,7 +61,6 @@ int receive( int sockfd, void *data , SAI* sock_addr);
 
 int request( int sockfd, SAI* sock_addr, int logged);
 
-void Request( int sockfd, SAI* sock_addr, int logged);
 
 int getreply( int sockfd, int logged, int timeout);
 

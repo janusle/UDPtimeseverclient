@@ -3,7 +3,7 @@
 
 extern int errno;
 
-
+/* convert hostname to ip address */
 static char*
 getip( SAI* servaddr )
 {
@@ -29,7 +29,7 @@ Socket( int family, int type, int protocol )
   return sockfd;
 }
 
-
+/* check if data is valid */
 static int 
 checkdata( binarydata *data )
 {
@@ -106,6 +106,7 @@ receive( int sockfd, void *data, SAI* sock_addr)
 }
 
 
+/* generate human-readable time */
 static char*
 printtime( binarydata *data )
 {
@@ -121,6 +122,7 @@ printtime( binarydata *data )
 }
 
 
+/* set timeout */
 static int 
 settimeout( int fd, int sec )
 {
@@ -151,7 +153,9 @@ getreply( int sockfd, int logged, int timeout )
 
    if( settimeout( sockfd, timeout ) <= 0 )
    {
-     fprintf(stdout, "timeclient: timeout-no reply\n");
+     if( logged )
+       fprintf(stdout, "timeclient: timeout-no reply\n");
+
      lfd = fopen(RECVLOG, "a");
      fprintf(lfd,"timeclient: timeout-no reply\n\n");
      fclose(lfd);

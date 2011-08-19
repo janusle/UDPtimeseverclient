@@ -44,6 +44,7 @@ Malloc( size_t size )
 }
 
 
+/* cut off space in the begining  and end  */
 static void 
 trim( char* line )
 {
@@ -77,6 +78,7 @@ trim( char* line )
 }
 
 
+/* getline from fd */
 static char* 
 getl( char *line, FILE* fd )
 {
